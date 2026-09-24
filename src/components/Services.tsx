@@ -2,11 +2,23 @@ import { useState } from 'react';
 import { X, ArrowRight } from 'lucide-react';
 import { SERVICES, type Service } from '@/data/content';
 
-export function Services() {
+interface ServicesProps {
+  onNavigateService?: (slug: string) => void;
+}
+
+export function Services({ onNavigateService }: ServicesProps) {
   const [activeService, setActiveService] = useState<Service | null>(null);
 
   const scrollToContact = () => {
     document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleCardClick = (service: Service) => {
+    if (service.detailSlug && onNavigateService) {
+      onNavigateService(service.detailSlug);
+    } else {
+      setActiveService(service);
+    }
   };
 
   return (
@@ -29,7 +41,7 @@ export function Services() {
               key={service.id}
               className="reveal group bg-white rounded-xl p-7 border border-charcoal-100 hover:border-forest-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col"
               style={{ transitionDelay: `${idx * 0.06}s` }}
-              onClick={() => setActiveService(service)}
+              onClick={() => handleCardClick(service)}
             >
               <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-light text-3xl mb-5 group-hover:bg-forest-700/5 transition-all duration-300">
                 {service.icon}
@@ -43,7 +55,7 @@ export function Services() {
               </p>
 
               <div className="flex items-center gap-2 text-sm font-bold text-forest-700 group-hover:gap-3 transition-all">
-                Ver más
+                {service.detailSlug ? 'Ver servicio' : 'Ver más'}
                 <ArrowRight className="w-4 h-4" />
               </div>
             </div>
@@ -51,7 +63,7 @@ export function Services() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal — only for services without a detail page */}
       {activeService && (
         <ServiceModal
           service={activeService}

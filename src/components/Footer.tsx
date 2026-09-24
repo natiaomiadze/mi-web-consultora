@@ -1,9 +1,18 @@
 import { Linkedin, ArrowUpRight } from 'lucide-react';
 import { NAV_LINKS, LINKEDIN_URL } from '@/data/content';
 
-export function Footer() {
-  const scrollTo = (href: string) => {
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+interface FooterProps {
+  variant?: 'home' | 'detail';
+  onHome?: (section?: string) => void;
+}
+
+export function Footer({ variant = 'home', onHome }: FooterProps) {
+  const handleClick = (href: string) => {
+    if (variant === 'detail' && onHome) {
+      onHome(href);
+    } else {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -12,7 +21,12 @@ export function Footer() {
         <div className="grid md:grid-cols-3 gap-10 mb-10">
           {/* Left — identity */}
           <div>
-            <p className="text-lg font-black text-charcoal-800 mb-1">Natia Omiadze</p>
+            <button
+              onClick={() => handleClick('#hero')}
+              className="text-lg font-black text-charcoal-800 mb-1"
+            >
+              Natia Omiadze
+            </button>
             <p className="text-sm text-charcoal-400">Consultora en Compras Sostenibles</p>
           </div>
 
@@ -21,16 +35,12 @@ export function Footer() {
             <ul className="flex flex-wrap md:justify-center gap-x-5 gap-y-2">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollTo(link.href);
-                    }}
+                  <button
+                    onClick={() => handleClick(link.href)}
                     className="text-sm font-medium text-charcoal-600 hover:text-forest-700 transition-colors"
                   >
                     {link.label}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
